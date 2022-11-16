@@ -29,7 +29,7 @@ function App() {
     try {
       const params = { RECIPE_ID: id };
 
-      const response = await axios.get("http://localhost:8080/ingredient", {
+      const response = await axios.get("http://localhost:5000/ingredient", {
         params,
       });
       setIngredients(response.data.result.row);
@@ -42,17 +42,13 @@ function App() {
     try {
       const params = { IRDNT_NM: name };
 
-      const response = await axios.get("http://localhost:8080/foodIdList", {
+      const response = await axios.get("http://localhost:5000/foodIdList", {
         params,
       });
-
-      console.log("response.data", response.data.result.row);
 
       if (response.data.result.row.length !== 0) {
         response.data.result.row.some((item) => {
           if (item.IRDNT_TY_NM === "주재료") {
-            console.log("this is ", item);
-
             foodIntroSearchById(item.RECIPE_ID);
             IngredientSearchById(item.RECIPE_ID);
             recipeSearchById(item.RECIPE_ID);
@@ -72,10 +68,9 @@ function App() {
     try {
       const params = { RECIPE_ID: id };
 
-      const response = await axios.get("http://localhost:8080/recipe", {
+      const response = await axios.get("http://localhost:5000/recipe", {
         params,
       });
-      console.log("recipe is ", response.data);
       setRecipe(response.data.result.row);
     } catch (err) {
       console.log(err);
@@ -84,7 +79,7 @@ function App() {
 
   const getAllIntroductions = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/allIntro");
+      const response = await axios.get("http://localhost:5000/allIntro");
       setIntroductions(response.data.result.row);
     } catch (err) {
       console.log(err);
@@ -92,13 +87,9 @@ function App() {
   };
   const foodIntroSearchById = async (id) => {
     try {
-      console.log("foodIntroSearchById", introductions);
-      const response = await axios.get("http://localhost:8080/allIntro");
+      const response = await axios.get("http://localhost:5000/allIntro");
       response.data.result.row.some((item) => {
-        //introductions.some((item) => {
-        console.log("food", item);
         if (item.RECIPE_ID === id) {
-          console.log(item);
           setRecipeIntro(item);
           setLoadingFlag(false);
           return true;
@@ -132,18 +123,11 @@ function App() {
       formData.append("file", e.target.files[0]);
 
       await axios({
-        url: "http://localhost:8080/food",
+        url: "http://localhost:5000/food",
         method: "POST",
         data: formData,
       })
         .then((response) => {
-          console.log(
-            "res",
-            response.data.foodName.substring(
-              0,
-              response.data.foodName.length - 2
-            )
-          );
           if (response.data.foodName.includes("potato")) {
             searchRecipeByImage("감자");
           } else if (response.data.foodName.includes("kimchi")) {
@@ -160,7 +144,6 @@ function App() {
 
   useEffect(() => {
     getAllIntroductions();
-    console.log("clickFlag", clickFlag);
   }, []);
 
   return (
